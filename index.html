@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAAZ - Connect. Share. Discover.</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8B0000">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css?v=24.0.0">
+</head>
+<body>
+
+  <!-- SPLASH / ENTRY ANIMATION -->
+  <div id="splashScreen" class="splash">
+    <div class="splashLogo">RAAZ</div>
+    <div class="splashTagline">Your Chats Is Fully. <span>RAAZ</span></div>
+  </div>
+
+  <!-- LOGIN / SIGNUP SCREEN -->
+  <div id="authScreen" class="screen hidden">
+    <div class="authBox">
+      <h1>RAAZ</h1>
+      <p class="subtitle">Private chats. Real connections.</p>
+
+      <input type="text" id="nameInput" placeholder="Apna naam likho">
+      <input type="text" id="usernameInput" placeholder="Username banao (jaise raaj123)">
+      <input type="email" id="emailInput" placeholder="Email">
+      <input type="password" id="passInput" placeholder="Password">
+
+      <button id="signupBtn">Create account</button>
+      <button id="loginBtn" class="secondaryBtn">Log in</button>
+
+      <p id="authError" class="error"></p>
+      <a href="privacy.html" target="_blank" class="privacyLink">Privacy Policy</a>
+    </div>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div id="homeScreen" class="screen hidden">
+    <div class="chatHeader raazHomeHeader">
+      <div class="raazBrandBlock">
+        <strong class="raazBrand">RAAZ</strong>
+        <span id="myUsernameDisplay">@username</span>
+      </div>
+      <div class="headerBtns">
+        <button id="notificationsBtn" class="headerIconBtn" aria-label="Notifications">
+          <span class="headerBellIcon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span id="notificationsBadge" class="badge hidden">0</span>
+        </button>
+        <button id="requestsBtn" class="headerIconBtn requestsIconBtn" aria-label="Message requests">
+          <span aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span><span id="requestsBadge" class="badge hidden">0</span>
+        </button>
+        <button id="openMoreBtn" class="headerIconBtn" aria-label="More"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/></svg></button>
+        <!-- Compatibility hooks: primary navigation is now the bottom bar. -->
+        <button id="profileBtn" class="hidden" aria-hidden="true" tabindex="-1">Profile</button>
+        <button id="logoutBtnHome" class="hidden" aria-hidden="true" tabindex="-1">Logout</button>
+        <!-- Hidden compatibility controls keep the legacy JS architecture alive without duplicate UI. -->
+        <button id="feedTabBtn" class="hidden" aria-hidden="true" tabindex="-1">Feed</button>
+        <button id="chatsTabBtn" class="hidden" aria-hidden="true" tabindex="-1">Chats</button>
+        <button id="blockedListBtn" class="hidden" aria-hidden="true" tabindex="-1">Blocked</button>
+      </div>
+    </div>
+
+
+
+    <section id="feedSection" class="feedSection">
+      <div class="storyRailWrap">
+        <div class="storyRailHeader">
+          <div>
+            <strong>Stories</strong>
+            <span>24 hours</span>
+          </div>
+          <span class="storyRailHint">Stories disappear after 24h</span>
+        </div>
+        <div id="storyRail" class="storyRail"></div>
+      </div>
+      <div class="feedToolbar">
+        <button class="feedFilter active" data-feed-filter="all">All</button>
+        <button class="feedFilter" data-feed-filter="following">Following</button>
+        <button class="feedFilter" data-feed-filter="saved">Saved</button>
+      </div>
+      <div class="gamePromoCard" id="openGamesHomeBtn" role="button" tabindex="0">
+        <div class="gamePromoIcon">G</div>
+        <div class="gamePromoText"><strong>RAAZ Game Center</strong><span>Chat ke beech quick game? Ludo, 2048 aur Stack Tower.</span></div>
+        <span class="gamePromoArrow">></span>
+      </div>
+      <div class="createPostCard">
+        <div class="miniComposerAvatar" id="composerAvatar">R</div>
+        <button id="openCreatePostBtn" class="composerPrompt">Kuch share karna hai?</button>
+      </div>
+      <div id="feedEmpty" class="feedEmpty hidden">
+        <div class="feedEmptyIcon">*</div>
+        <h3>RAAZ Feed</h3>
+        <p>Abhi koi post nahi hai. Sabse pehli post tum karo!</p>
+      </div>
+      <div id="feedList" class="feedList"></div>
+    </section>
+
+    <section id="chatsSection" class="chatsSection hidden">
+      <div class="homeSearch">
+        <input type="text" id="friendUsernameInput" placeholder="Username se logon ko dhundo">
+        <button id="findFriendBtn">Search</button>
+        <p id="homeError" class="error"></p>
+      </div>
+      <div id="searchResultsList" class="chatList hidden"></div>
+      <div id="chatListEmpty" class="chatListEmpty">No conversations yet. Search for a username to get started.</div>
+      <div id="chatListWrapper" class="chatList">
+        <div id="primarySectionLabel" class="sectionLabel hidden">Primary</div>
+        <div id="chatListPrimary"></div>
+        <div id="secondarySectionLabel" class="sectionLabel hidden">Secondary</div>
+        <div id="chatListSecondary"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="raazOfflineBar" class="raazOfflineBar hidden">You are offline  -  kuch actions internet aane par sync hongi</div>
+  <div id="raazToast" class="raazToast" role="status" aria-live="polite"></div>
+
+  <!-- REQUESTS SCREEN -->
+  <div id="requestsScreen" class="screen hidden">
+    <div class="chatHeader">
+      <button id="requestsBackBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span>Message requests</span>
+      <span style="width:40px"></span>
+    </div>
+    <div id="requestsEmpty" class="chatListEmpty hidden">Koi naya request nahi hai</div>
+    <div id="requestsList" class="chatList"></div>
+  </div>
+
+  <!-- PROFESSIONAL PROFILE -->
+  <section id="profileViewScreen" class="screen hidden profileScreenPro">
+    <div class="profileProHeader"><button id="profileViewBackBtn" class="iconBtn" aria-label="Back"><svg class="backIcon" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong id="profileViewHeaderTitle">Profile</strong><button id="profileViewMoreBtn" class="iconBtn" aria-label="More"><svg class="proDotsSvg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button></div>
+    <div class="profileProBody">
+      <div class="profileProTop">
+        <div id="viewAvatar" class="profileProAvatar">P</div>
+        <div class="profileProIdentity"><h1 id="viewName">Name</h1><p id="viewUsername">@username</p></div>
+      </div>
+      <p id="viewBio" class="profileProBio">Bio nahi likha hai abhi</p>
+      <div class="profileProStats">
+        <button class="profileProStat" id="viewPostsStat"><b id="viewPostsCount">0</b><span>Posts</span></button>
+        <button class="profileProStat" id="viewFollowersStat"><b id="viewFollowersCount">0</b><span>Followers</span></button>
+        <button class="profileProStat" id="viewFollowingStat"><b id="viewFollowingCount">0</b><span>Following</span></button>
+      </div>
+      <div id="followBtnArea" class="profileProActions"></div>
+      <div id="viewActionArea" class="profileProActionsSecondary"></div>
+      <p id="viewError" class="error"></p>
+      <div class="profileProTabs"><button class="profileProTab active" data-profile-tab="posts">Posts</button><button class="profileProTab" data-profile-tab="reels">Reels</button></div>
+      <div id="viewProfileGrid" class="profileContentGrid"></div>
+      <div id="viewProfileEmpty" class="profileContentEmpty hidden">No posts yet.</div>
+    </div>
+  </section>
+
+  <section id="profileScreen" class="screen hidden profileScreenPro">
+    <div class="profileProHeader"><button id="profileBackBtn" class="iconBtn" aria-label="Back"><svg class="backIcon" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Profile</strong><button id="profileSettingsTopBtn" class="iconBtn" aria-label="Settings"><svg class="proDotsSvg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button></div>
+    <div class="profileProBody">
+      <div class="profileProTop profileMineTop"><div class="avatarWrapper"><div class="profileProAvatar" id="profileAvatar">P</div><label for="photoInput" class="profilePhotoEdit" aria-label="Change photo"><svg viewBox="0 0 24 24"><path d="M4 7h3l1.6-2h6.8L17 7h3v12H4z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></label><input type="file" id="photoInput" accept="image/*" class="hidden"></div><div class="profileProIdentity"><h1 id="profileName">Name</h1><p id="profileUsername">@username</p></div></div>
+      <p id="bioDisplay" class="profileProBio">Bio nahi likha hai abhi</p>
+      <div class="profileProStats">
+        <button class="profileProStat" id="myPostsStat"><b id="myPostsCount">0</b><span>Posts</span></button>
+        <button class="profileProStat" id="myFollowersStat"><b id="myFollowersCount">0</b><span>Followers</span></button>
+        <button class="profileProStat" id="myFollowingStat"><b id="myFollowingCount">0</b><span>Following</span></button>
+      </div>
+      <div class="profileProMainActions"><button id="profileEditActionBtn" class="proActionBtn">Edit profile</button><button id="profileShareBtn" class="proActionBtn">Share profile</button></div>
+      <div id="profileEditPanel" class="profileEditPanel hidden">
+        <div class="editPanelRow"><label>Bio</label><textarea id="newBioInput" maxlength="120" rows="3" placeholder="Apne baare me kuch likho..."></textarea><div class="editPanelBtns"><button id="saveBioBtn" class="proActionBtn primary">Save Bio</button><button id="cancelBioBtn" class="proActionBtn">Cancel</button></div></div>
+        <div class="editPanelRow"><label>Username</label><input id="newUsernameInput" type="text" placeholder="Naya username daalo"><div class="editPanelBtns"><button id="saveUsernameBtn" class="proActionBtn primary">Save Username</button><button id="cancelUsernameBtn" class="proActionBtn">Cancel</button></div><p id="usernameEditError" class="error"></p></div>
+      </div>
+      <div class="profileDashboard" id="profileAnalytics">
+        <div class="profileDashHead"><div><strong>Professional dashboard</strong><span>Content performance</span></div><button id="profileRefreshAnalytics" class="analyticsRefresh" type="button">Refresh</button></div>
+        <div class="analyticsKpiGrid"><div><b id="analyticsReach">0</b><span>Total views</span></div><div><b id="analyticsLikes">0</b><span>Likes</span></div><div><b id="analyticsComments">0</b><span>Comments</span></div><div><b id="analyticsShares">0</b><span>Shares</span></div></div>
+      </div>
+      <div class="profileProTabs"><button class="profileProTab active" data-profile-tab="posts">Posts</button><button class="profileProTab" data-profile-tab="reels">Reels</button></div>
+      <div id="myProfileGrid" class="profileContentGrid"></div><div id="myProfileEmpty" class="profileContentEmpty hidden">No posts yet.</div>
+      <div class="profileUtilityLinks"><button id="profileSavedBtn">Saved</button></div>
+      <p id="photoUploadError" class="hidden" aria-hidden="true"></p><div id="qrcodeBox" class="hidden" aria-hidden="true"></div><div id="profileEmail" class="hidden" aria-hidden="true"></div>
+      <button id="profilePostsBtn" class="hidden" aria-hidden="true" tabindex="-1">My Posts</button>
+      <button id="editBioBtn" class="hidden" aria-hidden="true" tabindex="-1">Edit Bio</button>
+      <div id="editBioBox" class="hidden" aria-hidden="true"></div>
+      <button id="editUsernameBtn" class="hidden" aria-hidden="true" tabindex="-1">Edit Username</button>
+      <div id="editUsernameBox" class="hidden" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- BLOCKED USERS SCREEN -->
+  <div id="blockedScreen" class="screen hidden">
+    <div class="chatHeader">
+      <button id="blockedBackBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span>Blocked users</span>
+      <span style="width:40px"></span>
+    </div>
+    <div id="blockedEmpty" class="chatListEmpty hidden">Koi bhi block nahi hai</div>
+    <div id="blockedList" class="chatList"></div>
+  </div>
+
+  <!-- FOLLOWERS / FOLLOWING LIST SCREEN -->
+  <div id="peopleListScreen" class="screen hidden">
+    <div class="chatHeader">
+      <button id="peopleListBackBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span id="peopleListTitle">Followers</span>
+      <span style="width:40px"></span>
+    </div>
+    <div id="peopleListEmpty" class="chatListEmpty hidden">Koi nahi hai</div>
+    <div id="peopleListContainer" class="chatList"></div>
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="screen hidden">
+    <div class="chatHeader">
+      <button id="backBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="chatHeaderAvatar" id="chatHeaderAvatar"></div>
+      <div class="friendInfo">
+        <span id="friendNameDisplay">User</span>
+        <span id="friendStatus" class="statusText">...</span>
+      </div>
+      <button id="chatMenuBtn" class="iconBtn"><svg class="moreDotsSvg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
+      <button id="logoutBtn" class="hidden">Logout</button>
+    </div>
+
+    <div class="chatBody">
+      <div class="watermark">RAAZ</div>
+      <div id="messages" class="messages"></div>
+    </div>
+
+    <div id="chatTypingIndicator" class="chatTypingIndicator hidden"><span class="typingDots"><i></i><i></i><i></i></span><span>Typing...</span></div>
+    <div id="replyComposer" class="replyComposer hidden">
+      <div><small>Replying to <strong id="replyComposerName">User</strong></small><span id="replyComposerText">Message</span></div>
+      <button id="cancelReplyBtn" type="button" aria-label="Cancel reply">X</button>
+    </div>
+    <div id="messageReactionPicker" class="messageReactionPicker hidden" role="menu" aria-label="Message reactions">
+      <button type="button" data-reaction="heart" aria-label="Love"></button><button type="button" data-reaction="laugh" aria-label="Laugh"></button><button type="button" data-reaction="wow" aria-label="Wow"></button><button type="button" data-reaction="sad" aria-label="Sad"></button><button type="button" data-reaction="angry" aria-label="Angry"></button><button type="button" data-reaction="like" aria-label="Like"></button>
+    </div>
+    <div class="inputBar">
+      <label for="chatPhotoInput" class="attachBtn" aria-label="Attach photo" title="Attach photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 12.5 13 7a3.5 3.5 0 0 1 5 5l-7.5 7.5a5 5 0 0 1-7-7L11 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m8 15 6.5-6.5a1.5 1.5 0 0 1 2 2L10 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></label>
+      <input type="file" id="chatPhotoInput" accept="image/*" class="hidden">
+      <input type="text" id="msgInput" placeholder="Write a message...">
+      <button id="sendBtn">SEND</button>
+    </div>
+  </div>
+
+  <!-- CREATE POST MODAL -->
+  <div id="createPostOverlay" class="modalOverlay hidden">
+    <div class="createPostModal">
+      <div class="modalHeader">
+        <button id="closeCreatePostBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <strong>Create Post</strong>
+        <button id="publishPostBtn" class="publishBtn">Post</button>
+      </div>
+      <div class="postComposerBody">
+        <div class="composerIdentity">
+          <div class="miniComposerAvatar" id="postComposerAvatar">R</div>
+          <div><strong id="postComposerName">Tum</strong><span id="postComposerUsername">@username</span></div>
+        </div>
+        <textarea id="postCaptionInput" maxlength="1000" placeholder="Caption likho... (optional)"></textarea>
+        <label for="postImageInput" class="postImagePicker">Add photo</label>
+        <input id="postImageInput" type="file" accept="image/*" class="hidden">
+        <div id="postImagePreview" class="postImagePreview hidden"></div>
+        <p id="postError" class="error"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE STORY MODAL -->
+  <div id="createStoryOverlay" class="modalOverlay hidden">
+    <div class="createPostModal storyModal">
+      <div class="modalHeader">
+        <button id="closeCreateStoryBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <strong>Create Story</strong>
+        <button id="publishStoryBtn" class="publishBtn">Share</button>
+      </div>
+      <div class="storyComposerBody">
+        <div class="storyTypeTabs">
+          <button class="storyTypeBtn active" data-story-type="text">Aa Text</button>
+          <button class="storyTypeBtn" data-story-type="photo">Photo</button>
+        </div>
+        <div id="storyTextMode" class="storyTextMode">
+          <textarea id="storyTextInput" maxlength="250" placeholder="Story me kya kehna hai?"></textarea>
+          <div class="storyTextHint">Short, fresh aur temporary - 24 hours ke liye.</div>
+        </div>
+        <div id="storyPhotoMode" class="storyPhotoMode hidden">
+          <label for="storyImageInput" class="postImagePicker">Select story photo</label>
+          <input id="storyImageInput" type="file" accept="image/*" class="hidden">
+          <div id="storyImagePreview" class="postImagePreview hidden"></div>
+        </div>
+        <p id="storyError" class="error"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY VIEWER -->
+  <div id="storyViewerOverlay" class="storyViewerOverlay hidden">
+    <div class="storyViewer">
+      <div class="storyProgress"><span id="storyProgressBar"></span></div>
+      <div class="storyViewerHeader">
+        <div class="storyViewerUser">
+          <div id="storyViewerAvatar" class="storyViewerAvatar">R</div>
+          <div><strong id="storyViewerName">RAAZ User</strong><small id="storyViewerTime">Now</small></div>
+        </div>
+        <button id="closeStoryViewerBtn" class="iconBtn">X</button>
+      </div>
+      <div id="storyViewerContent" class="storyViewerContent"></div>
+      <button id="storyPrevBtn" class="storyNav storyNavPrev" aria-label="Previous story" title="Previous story"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="storyNextBtn" class="storyNav storyNavNext" aria-label="Next story" title="Next story"><svg class="nextIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="storyViewerFooter">
+        <button id="storyViewerViews" class="storyViewsBtn" type="button">0 views</button>
+        <button id="deleteStoryBtn" class="storyDeleteBtn hidden">Delete story</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY VIEWERS -->
+  <div id="storyViewersOverlay" class="modalOverlay hidden">
+    <div class="storyViewersModal">
+      <div class="modalHeader storyViewersHeader">
+        <button id="closeStoryViewersBtn" class="iconBtn" aria-label="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <strong>Story viewers</strong>
+        <span id="storyViewersCountLabel" class="storyViewersCountLabel">0</span>
+      </div>
+      <div id="storyViewersList" class="storyViewersList"></div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notificationsOverlay" class="modalOverlay hidden">
+    <div class="notificationsModal">
+      <div class="modalHeader">
+        <button id="closeNotificationsBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <strong>Notifications</strong>
+        <button id="markNotificationsBtn" class="textActionBtn">Read all</button>
+      </div>
+      <div id="notificationsList" class="notificationsList"></div>
+      <div id="notificationsEmpty" class="feedEmpty hidden">
+        <div class="feedEmptyIcon">Done</div>
+        <h3>All caught up</h3>
+        <p>Abhi koi notification nahi hai.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAAZ GAME CENTER -->
+  <section id="gamesScreen" class="screen hidden raazFeatureScreen gamesScreen">
+    <div class="featureHeader gamesHeader"><button id="gamesBackBtn" class="iconBtn" aria-label="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>RAAZ Game Center</strong><span class="gamesHeaderBadge">INFINITY Play</span></div>
+    <div class="gamesHero">
+      <div class="gamesHeroGlow">PLAY</div>
+      <div><strong>Akela ho? Game on.</strong><span>Short breaks, endless runs aur friends ke saath Ludo.</span></div>
+    </div>
+    <div id="gameCards" class="gameCards">
+      <button class="gameCard gameCardLudo" data-game-launch="ludo"><span class="gameCardIcon gameIconLudo">LUDO</span><span><strong>RAAZ Ludo</strong><small>Premium board  -  Bot ya Friend  -  4 pawns.</small></span><b>Play ></b></button>
+      <button class="gameCard" data-game-launch="2048"><span class="gameCardIcon gameIcon2048">2048</span><span><strong>2048 Infinite</strong><small>Endless merge  -  best score ko beat karo.</small></span><b>Play ></b></button>
+      <button class="gameCard" data-game-launch="stack"><span class="gameCardIcon gameIconStack">STACK</span><span><strong>Stack Tower</strong><small>Perfect blocks stack karo  -  combo aur high score.</small></span><b>Play ></b></button>
+    </div>
+
+    <div id="ludoPanel" class="gamePanel hidden">
+      <div class="gamePanelTop"><button id="ludoPanelBackBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><strong>RAAZ Ludo</strong><small id="ludoModeStatus">Choose your mode</small></div><span id="ludoRoomBadge" class="gameRoomBadge hidden"></span></div>
+      <div id="ludoLobby" class="ludoLobby">
+        <div class="ludoModeGrid"><button id="ludoBotModeBtn" class="ludoModeBtn active"><span class="modeGlyph">BOT</span><strong>Play vs Bot</strong><small>Solo  -  always available</small></button><button id="ludoFriendModeBtn" class="ludoModeBtn"><span class="modeGlyph">FRIEND</span><strong>Play with Friend</strong><small>Create or join a room</small></button></div>
+        <button id="startBotLudoBtn" class="primaryAction">Start Ludo</button>
+        <div id="friendLudoSetup" class="friendLudoSetup hidden"><button id="createLudoRoomBtn" class="primaryAction">Create Friend Room</button><div class="joinRoomRow"><input id="ludoRoomCodeInput" maxlength="6" minlength="6" pattern="[A-Za-z0-9]{6}" inputmode="text" autocomplete="off" placeholder="6-character code"><button id="joinLudoRoomBtn" class="secondaryGameBtn">Join</button></div><p id="ludoLobbyMessage" class="gameHint">Room banao aur code friend ko chat me bhej do.</p></div>
+      </div>
+      <div id="ludoGame" class="ludoGame hidden">
+        <div class="ludoMatchBar"><div class="ludoPlayerChip you"><i></i><span>You</span><small id="ludoYouScore">0 / 4 Home</small></div><div class="ludoTurnPill" id="ludoTurnPill">YOUR TURN</div><div class="ludoPlayerChip bot"><i></i><span id="ludoOpponentName">RAAZ Bot</span><small id="ludoOpponentScore">0 / 4 Home</small></div></div>
+        <div class="ludoStatusBar">
+          <div class="ludoDiceSide you"><div><small>Your dice</small><strong id="ludoTurnLabel">Your turn</strong></div><span id="ludoDiceValue" class="ludoDiceValue">-</span></div>
+          <button id="ludoDiceBtn" class="ludoDiceBtn" type="button" aria-label="Roll dice"><span class="diceGlyph">ROLL</span></button>
+          <div class="ludoDiceSide opponent"><div><small>Opponent dice</small><strong id="ludoPlayerLabel">You vs Bot</strong></div><span id="ludoOpponentDice" class="ludoDiceValue">-</span></div>
+        </div>
+        <div id="ludoBoard" class="ludoBoard" aria-label="Ludo board"></div>
+        <div class="ludoTip" id="ludoTip">6 roll karo aur pawn ko board par lao.</div>
+        <button id="newLudoGameBtn" class="secondaryGameBtn">New Game</button>
+      </div>
+    </div>
+
+    <div id="game2048Panel" class="gamePanel hidden">
+      <div class="gamePanelTop"><button class="iconBtn gamePanelBackBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><strong>2048 Infinite</strong><small>Swipe ya arrow keys  -  best score saved</small></div><span id="score2048">0</span></div>
+      <div class="game2048Top"><span>Score <b id="score2048Big">0</b></span><span>Best <b id="best2048">0</b></span><button id="new2048Btn" class="secondaryGameBtn">New</button></div>
+      <div id="board2048" class="board2048" tabindex="0"></div><p class="gameHint">Tiles ko swipe karo. 2048 ke baad bhi game continue hota hai.</p>
+    </div>
+
+    <div id="rushPanel" class="gamePanel hidden stackPanel">
+      <div class="gamePanelTop"><button class="iconBtn gamePanelBackBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><strong>Stack Tower</strong><small>Perfect blocks  -  endless high score</small></div><span id="rushScore">0</span></div>
+      <div class="rushHud"><span id="rushTime">LEVEL 1</span><span id="rushCombo">Combo x1</span></div>
+      <div id="rushArena" class="rushArena stackArena"><div id="stackSkyline" class="stackSkyline"></div><button id="rushTarget" class="rushTarget stackBlock" aria-label="Drop block"></button><div id="rushStartOverlay" class="rushStartOverlay"><strong>Stack Tower</strong><span>Moving block ko tap karke perfect tower banao.</span><button id="startRushBtn" class="primaryAction">Start Game</button></div></div>
+      <p class="gameHint">Perfect alignment par combo badhega. Tower kabhi khatam nahi hota - block chhota hota jayega.</p>
+    </div>
+  </section>
+
+  <!-- RAAZ V13 PROFESSIONAL SUPER APP NAVIGATION -->
+  <div id="raazBottomNav" class="raazBottomNav hidden">
+    <button data-raaz-nav="feed" class="raazNav active"><span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 20v-5h6v5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span><span>Home</span></button>
+    <button data-raaz-nav="explore" class="raazNav"><span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15 15 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>Explore</span></button>
+    <button data-raaz-nav="reels" class="raazNav"><span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="m10 8 6 4-6 4z" fill="currentColor"/></svg></span><span>Reels</span></button>
+    <button data-raaz-nav="games" class="raazNav raazGamesNav"><span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7.5 8.5-2 2.5-1.5 6a2.2 2.2 0 0 0 4.1 1.5l1.4-2h5l1.4 2a2.2 2.2 0 0 0 4.1-1.5l-1.5-6-2-2.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 12h3M9.5 10.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16.5" cy="11.5" r="1" fill="currentColor"/><circle cx="18.5" cy="13.5" r="1" fill="currentColor"/></svg></span><span>Games</span></button>
+    <button data-raaz-nav="create" class="raazNav raazNavCreate"><span class="navIcon">+</span><span>Create</span></button>
+    <button data-raaz-nav="chats" class="raazNav raazChatsNav"><span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span><span>Chats</span><span id="chatNavBadge" class="navBadge hidden">0</span></button>
+    <button data-raaz-nav="profile" class="raazNav"><span id="bottomProfileAvatar" class="bottomProfileAvatar">R</span><span>Profile</span></button>
+  </div>
+
+  <!-- EXPLORE -->
+  <section id="exploreScreen" class="screen hidden raazFeatureScreen">
+    <div class="featureHeader"><button id="exploreBackBtn" class="iconBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Explore</strong><span class="featureHeaderSpacer"></span></div>
+    <div class="featureSearch"><input id="exploreSearchInput" placeholder="Users, posts, #hashtags search karo..."><button id="exploreSearchBtn">Search</button></div>
+    <div class="exploreChips"><button class="exploreChip active" data-explore-filter="all">All</button><button class="exploreChip" data-explore-filter="people">People</button><button class="exploreChip" data-explore-filter="posts">Posts</button><button class="exploreChip" data-explore-filter="hashtags"># Hashtags</button></div>
+    <div id="exploreResults" class="featureResults"></div>
+  </section>
+
+  <!-- REELS -->
+  <section id="reelsScreen" class="screen hidden raazFeatureScreen">
+    <div class="featureHeader"><button id="reelsBackBtn" class="iconBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Reels</strong><span class="featureHeaderSpacer"></span></div>
+    <div id="reelsList" class="reelsList"></div>
+    <div id="reelsEmpty" class="featureEmpty"><div>PLAY</div><h3>RAAZ Reels</h3><p>Short videos ka dedicated space.</p><button id="createReelBtn" class="primaryAction">+ Create Reel</button></div>
+  </section>
+
+  <!-- GROUPS / CHANNELS -->
+  <section id="groupsScreen" class="screen hidden raazFeatureScreen">
+    <div class="featureHeader"><button id="groupsBackBtn" class="iconBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Communities</strong><span class="featureHeaderSpacer"></span></div>
+    <div class="featureHero"><span>GROUP</span><div><h3>Groups & Channels</h3><p>Friends aur community ke saath connect raho.</p></div><button id="createGroupBtn" class="primaryAction">+ Create</button></div>
+    <div id="groupsList" class="featureResults"></div>
+    <div id="groupsEmpty" class="featureEmpty"><h3>No communities yet</h3><p>Apna pehla group create karo.</p></div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="notesScreen" class="screen hidden raazFeatureScreen">
+    <div class="featureHeader"><button id="notesBackBtn" class="iconBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Notes</strong><span class="featureHeaderSpacer"></span></div>
+    <div class="noteComposer"><textarea id="noteInput" maxlength="120" placeholder="Aaj kya chal raha hai? 120 characters..." ></textarea><button id="publishNoteBtn" class="primaryAction">Share Note</button></div>
+    <div id="notesList" class="notesList"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settingsScreen" class="screen hidden raazFeatureScreen">
+    <div class="featureHeader"><button id="settingsBackBtn" class="iconBtn" aria-label="Back" title="Back"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Settings</strong><span class="featureHeaderSpacer"></span></div>
+    <div class="settingsGroup"><h4>Account & safety</h4><button id="openBlockedFromSettings" class="settingRow">BLOCKED Blocked users <span class="rowChevron">&gt;</span></button></div>
+    <div class="settingsGroup settingsQrGroup"><h4>Share your profile</h4><div class="settingsQrCard"><div id="settingsQrBox" class="settingsQrBox" aria-label="RAAZ profile QR code"></div><div class="settingsQrText"><strong>RAAZ Profile QR</strong><span>Apna profile QR code share karke friends ko RAAZ par directly profile tak bhejo.</span><button id="openSettingsQrBtn" class="primaryAction" type="button">Show my QR</button></div></div></div>
+    <div class="settingsGroup"><h4>Privacy</h4><label class="settingRow">Private account <input id="privateAccountToggle" type="checkbox"></label><label class="settingRow">Activity status <input id="activityStatusToggle" type="checkbox" checked></label><label class="settingRow">Allow message requests <input id="messageRequestsToggle" type="checkbox" checked></label></div>
+    <div class="settingsGroup"><h4>Experience</h4><label class="settingRow">Reduce motion <input id="reduceMotionToggle" type="checkbox"></label><label class="settingRow">Compact interface <input id="compactUiToggle" type="checkbox"></label><label class="settingRow">Autoplay reels <input id="autoplayReelsToggle" type="checkbox" checked></label><label class="settingRow">Theme <select id="raazThemeSelect" class="settingSelect"><option value="midnight">Midnight</option><option value="ember">Ember</option><option value="graphite">Graphite</option></select></label><button id="clearSearchHistoryBtn" class="settingRow dangerText">Clear search history <span class="rowChevron">&gt;</span></button></div>
+    <div class="settingsGroup"><h4>Account</h4><button id="settingsLogoutBtn" class="settingRow dangerText">Log out <span>Secure sign out</span></button></div>
+    <div class="settingsAbout">RAAZ  -  Connect. Share. Discover.<br><span>Built for simple, private and smooth social experiences.</span></div>
+  </section>
+
+  <!-- CREATE GROUP -->
+  <div id="createGroupOverlay" class="modalOverlay hidden"><div class="createPostModal"><div class="modalHeader"><button id="closeCreateGroupBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Create Community</strong><button id="publishGroupBtn" class="publishBtn">Create</button></div><div class="postComposerBody"><input id="groupNameInput" maxlength="50" placeholder="Community name"><textarea id="groupBioInput" maxlength="160" placeholder="Community ke baare me..."></textarea><div class="storyTypeTabs"><button id="groupTypeGroup" class="storyTypeBtn active">Group</button><button id="groupTypeChannel" class="storyTypeBtn">Channel</button></div><p id="groupError" class="error"></p></div></div></div>
+
+  <!-- CREATE REEL -->
+  <div id="createReelOverlay" class="modalOverlay hidden"><div class="createPostModal"><div class="modalHeader"><button id="closeCreateReelBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Create Reel</strong><button id="publishReelBtn" class="publishBtn">Publish</button></div><div class="postComposerBody"><textarea id="reelCaptionInput" maxlength="500" placeholder="Reel caption..."></textarea><label for="reelVideoInput" class="postImagePicker">Select video</label><input id="reelVideoInput" type="file" accept="video/*" class="hidden"><div id="reelVideoPreview" class="postImagePreview hidden"></div><p id="reelError" class="error"></p></div></div></div>
+
+  <!-- REEL COMMENTS -->
+  <div id="reelCommentsOverlay" class="modalOverlay hidden">
+    <div class="createPostModal reelCommentsModal">
+      <div class="modalHeader"><button id="closeReelCommentsBtn" class="iconBtn"><svg class="backIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Reel Comments</strong><button id="sendReelCommentBtn" class="publishBtn">Send</button></div>
+      <div id="reelCommentsList" class="reelCommentsList"></div>
+      <div class="reelCommentComposer"><input id="reelCommentInput" maxlength="300" placeholder="Comment likho..."><span id="reelCommentPostId" class="hidden"></span></div>
+    </div>
+  </div>
+
+  <!-- STORY REPLY -->
+  <div id="storyReplyBar" class="storyReplyBar hidden"><input id="storyReplyInput" maxlength="300" placeholder="Story ko reply karo..."><button id="sendStoryReplyBtn">SEND</button></div>
+
+  <!-- GLOBAL CREATE SHEET: ek hi jagah se saare creation actions -->
+  <div id="createActionOverlay" class="menuOverlay hidden">
+    <div class="menuSheet createActionSheet">
+      <div class="menuSheetHandle"></div>
+      <div class="menuSheetTitle"><strong>Create</strong><span>RAAZ par kuch naya share karo</span></div>
+      <button id="createActionPost" class="createActionItem"><span class="createActionIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span class="createActionText"><strong>Post</strong><small>Photo + caption</small></span></button>
+      <button id="createActionStory" class="createActionItem"><span class="createActionIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="createActionText"><strong>Story</strong><small>24 hours ke liye</small></span></button>
+      <button id="createActionReel" class="createActionItem"><span class="createActionIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg></span><span class="createActionText"><strong>Reel</strong><small>Short video</small></span></button>
+      <button id="createActionNote" class="createActionItem"><span class="createActionIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9 11h6M9 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="createActionText"><strong>Note</strong><small>Quick thought</small></span></button>
+      <button id="closeCreateActionBtn" class="menuSheetBtn cancel">Close</button>
+    </div>
+  </div>
+
+  <!-- APP DRAWER -->
+  <div id="raazMoreOverlay" class="menuOverlay hidden">
+    <div class="menuSheet appMenuSheet">
+      <div class="menuSheetHandle"></div>
+      <div class="menuSheetTitle"><strong>RAAZ</strong><span>Quick access</span></div>
+      <button id="openGamesBtn" class="menuSheetBtn appDrawerItem"><span class="drawerIcon">G</span><span class="drawerText"><strong>Game Center</strong><small>Ludo, 2048 & Stack Tower</small></span><span class="drawerArrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <button id="openGroupsBtn" class="menuSheetBtn appDrawerItem"><span class="drawerIcon">C</span><span class="drawerText"><strong>Communities</strong><small>Groups & channels</small></span><span class="drawerArrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <button id="openNotesBtn" class="menuSheetBtn appDrawerItem"><span class="drawerIcon">N</span><span class="drawerText"><strong>Notes</strong><small>Share a quick thought</small></span><span class="drawerArrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <button id="openSettingsBtn" class="menuSheetBtn appDrawerItem"><span class="drawerIcon">S</span><span class="drawerText"><strong>Settings & Privacy</strong><small>Account, privacy & experience</small></span><span class="drawerArrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <button id="moreLogoutBtn" class="menuSheetBtn danger">Log out</button>
+      <button id="closeMoreBtn" class="menuSheetBtn cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- POST ACTION SHEET -->
+  <div id="postActionOverlay" class="menuOverlay hidden">
+    <div class="menuSheet postActionSheet">
+      <div class="menuSheetHandle"></div>
+      <strong id="postActionTitle" class="postActionTitle">Post options</strong>
+      <button id="editPostActionBtn" class="menuSheetBtn">Edit post</button>
+      <button id="deletePostActionBtn" class="menuSheetBtn danger">DELETE Delete post</button>
+      <button id="reportPostActionBtn" class="menuSheetBtn danger">REPORT Report post</button>
+      <button id="closePostActionBtn" class="menuSheetBtn cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM SHEET MENU: chat item ke liye (Primary/Secondary, Block, Delete) -->
+  <div id="chatItemMenuOverlay" class="menuOverlay hidden">
+    <div class="menuSheet">
+      <button id="moveCategoryBtn" class="menuSheetBtn">Move to Secondary</button>
+      <button id="blockFromMenuBtn" class="menuSheetBtn danger">Block User</button>
+      <button id="deleteChatBtn" class="menuSheetBtn danger">Delete Chat</button>
+      <button id="closeMenuBtn" class="menuSheetBtn cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- QR Code generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script src="firebase-config.js?v=24.0.0"></script>
+  <script src="app.js?v=24.0.0"></script>
+</body>
+</html>
